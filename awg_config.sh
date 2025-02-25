@@ -258,7 +258,7 @@ else
 	is_install_podkop="y"
 	read is_install_podkop
 
-	if [ "$is_install_podkop" = "y" ] || [ "$is_install_podkop" = "Y" ]; then
+	#if [ "$is_install_podkop" = "y" ] || [ "$is_install_podkop" = "Y" ]; then
 		DOWNLOAD_DIR="/tmp/podkop"
 		mkdir -p "$DOWNLOAD_DIR"
 		REPO="https://api.github.com/repos/itdoginfo/podkop/releases/tags/v0.2.5"
@@ -283,7 +283,7 @@ else
 		uci commit podkop
 		echo "Service Podkop restart..."
 		service podkop restart
-	fi
+	#fi
 fi
 
 printf  "\033[32;1mStop and disabled service 'youtubeUnblock'...\033[0m"
