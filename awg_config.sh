@@ -124,7 +124,7 @@ echo "opkg update"
 opkg update
 
 #проверка и установка пакетов AmneziaWG
-install_awg_packages
+#install_awg_packages
 
 #проверяем установлени ли библиотека jq
 if opkg list-installed | grep -q jq; then
