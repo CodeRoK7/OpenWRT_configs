@@ -354,10 +354,15 @@ printf  "\033[32;1mRestart firewall and network...\033[0m\n"
 service firewall restart
 #service network restart
 
-#second=15
-#echo "Please wait $second seconds for reboot network..."
-#sleep $second
-#printf  "\033[32;1mService Podkop restart...\033[0m\n"
+# Отключаем интерфейс
+ifdown awg10
+
+# Ждем несколько секунд (по желанию)
+sleep 2
+
+# Включаем интерфейс
+ifup awg10
+printf  "\033[32;1mService Podkop restart...\033[0m\n"
 service podkop restart
 
-printf  "\033[32;1mConfigured completed...\033[0m"
+printf  "\033[32;1mConfigured completed...\033[0m\n"
