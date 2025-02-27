@@ -355,13 +355,13 @@ service firewall restart
 #service network restart
 
 # Отключаем интерфейс
-ifdown awg10
+ifdown $INTERFACE_NAME
 
 # Ждем несколько секунд (по желанию)
 sleep 2
 
 # Включаем интерфейс
-ifup awg10
+ifup $INTERFACE_NAME
 printf  "\033[32;1mService Podkop restart...\033[0m\n"
 service podkop restart
 
