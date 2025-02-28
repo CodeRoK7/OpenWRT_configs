@@ -88,6 +88,38 @@ install_awg_packages() {
     rm -rf "$AWG_DIR"
 }
 
+manage_package() {
+    local name="$1"
+    local autostart="$2"
+    local process="$3"
+
+    # Проверка, установлен ли пакет
+    if opkg list-installed | grep -q "^$name"; then
+        
+        # Проверка, включен ли автозапуск
+        if /etc/init.d/$name enabled; then
+            if [ "$autostart" = "disable" ]; then
+                /etc/init.d/$name disable
+            fi
+        else
+            if [ "$autostart" = "enable" ]; then
+                /etc/init.d/$name enable
+            fi
+        fi
+
+        # Проверка, запущен ли процесс
+        if pidof $name > /dev/null; then
+            if [ "$process" = "stop" ]; then
+                /etc/init.d/$name stop
+            fi
+        else
+            if [ "$process" = "start" ]; then
+                /etc/init.d/$name start
+            fi
+        fi
+    fi
+}
+
 echo "opkg update"
 opkg update
 
@@ -133,6 +165,20 @@ else
 	fi
 fi
 
+DIR="/etc/config"
+DIR_BACKUP="/root/backup2"
+config_files="network
+firewall"
+
+if [ ! -d "$DIR_BACKUP" ]
+then
+    echo "Backup files..."
+    mkdir -p $DIR_BACKUP
+    for file in $config_files
+    do
+        cp -f "$DIR/$file" "$DIR_BACKUP/$file"  
+    done
+fi
 
 #запрос конфигурации WARP
 result=$(curl 'https://warp.llimonix.pw/api/warp' \
@@ -177,8 +223,8 @@ EndpointPort=$(echo "$Endpoint" | cut -d':' -f2)
 printf "\033[32;1mCreate and configure tunnel AmneziaWG WARP...\033[0m\n"
 
 #задаём имя интерфейса
-INTERFACE_NAME="awg_route10"
-CONFIG_NAME="amnezia_route10"
+INTERFACE_NAME="awg10"
+CONFIG_NAME="amneziawg_awg10"
 PROTO="amneziawg"
 ZONE_NAME="awg"
 
@@ -253,58 +299,70 @@ for zone in $ZONES; do
   fi
 done
 
+path_podkop_config="/etc/config/podkop"
+path_podkop_config_backup="/root/podkop"
+URL="https://raw.githubusercontent.com/CodeRoK7/RouterichAX3000_configs/refs/heads/main"
+
 if [ -f "/etc/init.d/podkop" ]; then
-    	path_podkop_config="/etc/config/podkop"
-	path_podkop_config_backup="/root/podkop"
-	URL="https://raw.githubusercontent.com/CodeRoK7/RouterichAX3000_configs/refs/heads/main"
 	printf "Podkop installed. Reconfigured on AWG WARP? (y/n): \n"
 	is_reconfig_podkop="y"
 	read is_reconfig_podkop
 	if [ "$is_reconfig_podkop" = "y" ] || [ "$is_reconfig_podkop" = "Y" ]; then
 		cp -f "$path_podkop_config" "$path_podkop_config_backup"
-		wget -O "$path_podkop_config" "$URL/podkop" 
+		wget -O "$path_podkop_config" "$URL/config_files/podkop" 
 		echo "Backup of your config in path '$path_podkop_config_backup'"
 		echo "Podkop reconfigured..."
-		echo "Service Podkop restart..."
-		service podkop restart
 	fi
 else
 	printf "\033[32;1mInstall and configure PODKOP (a tool for point routing of traffic)?? (y/n): \033[0m\n"
 	is_install_podkop="y"
 	read is_install_podkop
 
-	#if [ "$is_install_podkop" = "y" ] || [ "$is_install_podkop" = "Y" ]; then
+	if [ "$is_install_podkop" = "y" ] || [ "$is_install_podkop" = "Y" ]; then
 		DOWNLOAD_DIR="/tmp/podkop"
 		mkdir -p "$DOWNLOAD_DIR"
-		REPO="https://api.github.com/repos/itdoginfo/podkop/releases/tags/v0.2.5"
-		wget -qO- "$REPO" | grep -o 'https://[^"]*\.ipk' | while read -r url; do
-			filename=$(basename "$url")
-			echo "Download $filename..."
-			wget -q -O "$DOWNLOAD_DIR/$filename" "$url"
+		podkop_files="podkop_0.2.5-1_all.ipk
+			luci-app-podkop_0.2.5_all.ipk
+			luci-i18n-podkop-ru_0.2.5.ipk"
+		for file in $podkop_files
+		do
+			echo "Download $file..."
+			wget -q -O "$DOWNLOAD_DIR/$file" "$URL/podkop_packets/$file"
 		done
 		opkg install $DOWNLOAD_DIR/podkop*.ipk
 		opkg install $DOWNLOAD_DIR/luci-app-podkop*.ipk
 		opkg install $DOWNLOAD_DIR/luci-i18n-podkop-ru*.ipk
 		rm -f $DOWNLOAD_DIR/podkop*.ipk $DOWNLOAD_DIR/luci-app-podkop*.ipk $DOWNLOAD_DIR/luci-i18n-podkop-ru*.ipk
-
-		uci set podkop.main.mode='vpn'
-		uci set podkop.main.interface="$INTERFACE_NAME"
-		uci set podkop.main.domain_list_enabled='1'
-		uci set podkop.main.domain_list='ru_inside'
-		uci set podkop.main.delist_domains_enabled='0'
-		uci add_list podkop.main.subnets='meta'
-		uci add_list podkop.main.subnets='twitter'
-		uci add_list podkop.main.subnets='discord'
-		uci commit podkop
-		echo "Service Podkop restart..."
-		service podkop restart
-	#fi
+		wget -O "$path_podkop_config" "$URL/config_files/podkop" 
+		echo "Podkop installed.."
+	fi
 fi
 
-printf  "\033[32;1mStop and disabled service 'youtubeUnblock'...\033[0m"
-service youtubeUnblock stop
-service youtubeUnblock disable
+printf  "\033[32;1mStop and disabled service 'youtubeUnblock' and 'ruantiblock'...\033[0m\n"
+manage_package "youtubeUnblock" "disable" "stop"
+manage_package "ruantiblock" "disable" "stop"
 
-printf  "Configured completed...\n\033[32;1mRestart network...\033[0m\n"
+str=$(grep -i "0 4 \* \* \* wget -O - $URL/configure_zaprets.sh | sh" /etc/crontabs/root)
+if [ ! -z "$str" ]
+then
+	grep -v "0 4 \* \* \* wget -O - $URL/configure_zaprets.sh | sh" /etc/crontabs/root > /etc/crontabs/temp
+	cp -f "/etc/crontabs/temp" "/etc/crontabs/root"
+	rm -f "/etc/crontabs/temp"
+fi
+
+printf  "\033[32;1mRestart firewall and network...\033[0m\n"
 service firewall restart
-service network restart
+#service network restart
+
+# Отключаем интерфейс
+ifdown $INTERFACE_NAME
+
+# Ждем несколько секунд (по желанию)
+sleep 2
+
+# Включаем интерфейс
+ifup $INTERFACE_NAME
+printf  "\033[32;1mService Podkop restart...\033[0m\n"
+service podkop restart
+
+printf  "\033[32;1mConfigured completed...\033[0m\n"
