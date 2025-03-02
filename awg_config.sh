@@ -120,25 +120,37 @@ manage_package() {
     fi
 }
 
+checkPackageAndInstall()
+{
+    local name="$1"
+    local isRequried="$2"
+    #проверяем установлени ли библиотека $name
+    if opkg list-installed | grep -q $name; then
+        echo "$name already installed..."
+    else
+        echo "$name not installed. Installed $name..."
+        opkg install $name
+		res=$?
+		if [ "$isRequried" = "1" ]; then
+			if [ $res -eq 0 ]; then
+				echo "$name insalled successfully"
+			else
+				echo "Error installing $name. Please, install $name manually and run the script again"
+				exit 1
+			fi
+		fi
+    fi
+}
+
 echo "opkg update"
 opkg update
 
 #проверка и установка пакетов AmneziaWG
 install_awg_packages
 
-#проверяем установлени ли библиотека jq
-if opkg list-installed | grep -q jq; then
-    echo "jq already installed..."
-else
-	echo "jq not installed. Installed jq..."
-	opkg install jq
-	if [ $? -eq 0 ]; then
-		echo "jq file downloaded successfully"
-	else
-		echo "Error installing jq. Please, install jq manually and run the script again"
-		exit 1
-	fi
-fi
+checkPackageAndInstall "jq" "1"
+checkPackageAndInstall "coreutils-base64" "1"
+checkPackageAndInstall "curl" "1"
 
 #проверяем установлени ли пакет dnsmasq-full
 if opkg list-installed | grep -q dnsmasq-full; then
@@ -151,18 +163,15 @@ else
 	[ -f /etc/config/dhcp-opkg ] && cp /etc/config/dhcp /etc/config/dhcp-old && mv /etc/config/dhcp-opkg /etc/config/dhcp
 fi
 
-#проверяем установлени ли пакет coreutils-base64
-if opkg list-installed | grep -q coreutils-base64; then
-	echo "coreutils-base64 already installed..."
-else
-	echo "Installed coreutils-base64"
-	opkg install coreutils-base64
-	if [ $? -eq 0 ]; then
-		echo "coreutils-base64 file downloaded successfully"
-	else
-		echo "Error installing coreutils-base64. Please, install coreutils-base64 manually and run the script again"
-		exit 1
-	fi
+openwrt_release=$(cat /etc/openwrt_release | grep -Eo [0-9]{2}[.][0-9]{2}[.][0-9]* | cut -d '.' -f 1 | tail -n 1)
+if [ $openwrt_release -ge 24 ]; then
+    if uci get dhcp.@dnsmasq[0].confdir | grep -q /tmp/dnsmasq.d; then
+        echo "confdir alreadt set"
+    else
+        printf "Setting confdir"
+        uci set dhcp.@dnsmasq[0].confdir='/tmp/dnsmasq.d'
+        uci commit dhcp
+    fi
 fi
 
 DIR="/etc/config"
