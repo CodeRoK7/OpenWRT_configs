@@ -142,6 +142,27 @@ checkPackageAndInstall()
     fi
 }
 
+requestConfWARP()
+{
+	#запрос конфигурации WARP
+	local result=$(curl -w "%{http_code}" 'https://warp.llimonix.pw/api/warp' \
+	  -H 'Accept: */*' \
+	  -H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
+	  -H 'Connection: keep-alive' \
+	  -H 'Content-Type: application/json' \
+	  -H 'Origin: https://warp.llimonix.pw' \
+	  -H 'Referer: https://warp.llimonix.pw/' \
+	  -H 'Sec-Fetch-Dest: empty' \
+	  -H 'Sec-Fetch-Mode: cors' \
+	  -H 'Sec-Fetch-Site: same-origin' \
+	  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
+	  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133")' \
+	  -H 'sec-ch-ua-mobile: ?0' \
+	  -H 'sec-ch-ua-platform: "Windows"' \
+	  --data-raw '{"selectedServices":[],"siteMode":"all","deviceType":"computer"}')
+	echo "$result"
+}
+
 echo "opkg update"
 opkg update
 
@@ -190,22 +211,23 @@ then
 fi
 
 #запрос конфигурации WARP
-result=$(curl 'https://warp.llimonix.pw/api/warp' \
-  -H 'Accept: */*' \
-  -H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
-  -H 'Connection: keep-alive' \
-  -H 'Content-Type: application/json' \
-  -H 'Origin: https://warp.llimonix.pw' \
-  -H 'Referer: https://warp.llimonix.pw/' \
-  -H 'Sec-Fetch-Dest: empty' \
-  -H 'Sec-Fetch-Mode: cors' \
-  -H 'Sec-Fetch-Site: same-origin' \
-  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
-  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133")' \
-  -H 'sec-ch-ua-mobile: ?0' \
-  -H 'sec-ch-ua-platform: "Windows"' \
-  --data-raw '{"selectedServices":[],"siteMode":"all","deviceType":"computer"}')
-
+result=$(requestConfWARP)
+response_code="${result: -3}"
+result="${result%???}"
+#echo "$result"
+if [ ! "$response_code" -eq 200 ]
+then
+	echo "Получить конфигурацию WARP не удалось. Попробуйте позже запустить скрипт."
+	exit 1
+fi
+#парсим результат запроса конфигурации WARP
+status=$(echo $result | jq '.success')
+#echo "$status"
+if [ ! "$status" = "true" ]
+then
+	echo "Получить конфигурацию WARP не удалось. Попробуйте позже запустить скрипт."
+	exit 1
+fi
 
 #парсим результат запроса конфигурации WARP
 content=$(echo $result | jq '.content')
@@ -307,6 +329,29 @@ for zone in $ZONES; do
     fi
   fi
 done
+
+nameRule="option name 'Block_UDP_443'"
+str=$(grep -i "$nameRule" /etc/config/firewall)
+if [ -z "$str" ] 
+then
+  echo "Add block QUIC..."
+
+  uci add firewall rule # =cfg2492bd
+  uci set firewall.@rule[-1].name='Block_UDP_80'
+  uci add_list firewall.@rule[-1].proto='udp'
+  uci set firewall.@rule[-1].src='lan'
+  uci set firewall.@rule[-1].dest='wan'
+  uci set firewall.@rule[-1].dest_port='80'
+  uci set firewall.@rule[-1].target='REJECT'
+  uci add firewall rule # =cfg2592bd
+  uci set firewall.@rule[-1].name='Block_UDP_443'
+  uci add_list firewall.@rule[-1].proto='udp'
+  uci set firewall.@rule[-1].src='lan'
+  uci set firewall.@rule[-1].dest='wan'
+  uci set firewall.@rule[-1].dest_port='443'
+  uci set firewall.@rule[-1].target='REJECT'
+  uci commit firewall
+fi
 
 path_podkop_config="/etc/config/podkop"
 path_podkop_config_backup="/root/podkop"
