@@ -353,6 +353,9 @@ then
   uci commit firewall
 fi
 
+printf  "\033[32;1mRestart service dnsmasq...\033[0m\n"
+service dnsmasq restart
+
 path_podkop_config="/etc/config/podkop"
 path_podkop_config_backup="/root/podkop"
 URL="https://raw.githubusercontent.com/CodeRoK7/RouterichAX3000_configs/refs/heads/main"
@@ -409,7 +412,6 @@ fi
 
 printf  "\033[32;1mRestart firewall and network...\033[0m\n"
 service firewall restart
-service dnsmasq restart
 #service network restart
 
 # Отключаем интерфейс
