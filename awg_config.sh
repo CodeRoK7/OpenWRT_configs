@@ -409,6 +409,7 @@ fi
 
 printf  "\033[32;1mRestart firewall and network...\033[0m\n"
 service firewall restart
+service dnsmasq restart
 #service network restart
 
 # Отключаем интерфейс
