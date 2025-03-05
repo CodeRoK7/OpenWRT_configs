@@ -314,32 +314,64 @@ then
     done
 fi
 
-warp_config="Error"
-printf "\033[32;1mRequest WARP config... Attempt #1\033[0m\n"
-result=$(requestConfWARP1)
-warpGen=$(check_request "$result" 1)
-
-if [ "$warpGen" = "Error" ]
+printf "\033[32;1mAutomatic generate config AmneziaWG WARP (n) or manual input parameters for AmneziaWG (y)...\033[0m\n"
+echo "Input manual parameters AmneziaWG? (y/n): "
+read is_manual_input_parameters
+if [ "$is_manual_input_parameters" = "y" ] || [ "$is_manual_input_parameters" = "Y" ]
 then
-	printf "\033[32;1mRequest WARP config... Attempt #2\033[0m\n"
-	result=$(requestConfWARP2)
-	warpGen=$(check_request "$result" 2)
+	read -r -p "Enter the private key (from [Interface]):"$'\n' PrivateKey
+	read -r -p "Enter S1 value (from [Interface]):"$'\n' S1
+	read -r -p "Enter S2 value (from [Interface]):"$'\n' S2
+	read -r -p "Enter Jc value (from [Interface]):"$'\n' Jc
+	read -r -p "Enter Jmin value (from [Interface]):"$'\n' Jmin
+	read -r -p "Enter Jmax value (from [Interface]):"$'\n' Jmax
+	read -r -p "Enter H1 value (from [Interface]):"$'\n' H1
+	read -r -p "Enter H2 value (from [Interface]):"$'\n' H2
+	read -r -p "Enter H3 value (from [Interface]):"$'\n' H3
+	read -r -p "Enter H4 value (from [Interface]):"$'\n' H4
+	
+	while true; do
+		read -r -p "Enter internal IP address with subnet, example 192.168.100.5/24 (from [Interface]):"$'\n' Address
+		if echo "$Address" | egrep -oq '^([0-9]{1,3}\.){3}[0-9]{1,3}(/[0-9]+)?$'; then
+			break
+		else
+			echo "This IP is not valid. Please repeat"
+		fi
+	done
 
+	read -r -p "Enter the public key (from [Peer]):"$'\n' PublicKey
+	read -r -p "Enter Endpoint host without port (Domain or IP) (from [Peer]):"$'\n' EndpointIP
+	read -r -p "Enter Endpoint host port (from [Peer]) [51820]:"$'\n' EndpointPort
+
+	DNS="1.1.1.1"
+	MTU=1280
+	AllowedIPs="0.0.0.0/0"
+else
+	warp_config="Error"
+	printf "\033[32;1mRequest WARP config... Attempt #1\033[0m\n"
+	result=$(requestConfWARP1)
+	warpGen=$(check_request "$result" 1)
 	if [ "$warpGen" = "Error" ]
 	then
-		printf "\033[32;1mRequest WARP config... Attempt #3\033[0m\n"
-		result=$(requestConfWARP3)
-		warpGen=$(check_request "$result" 3)
-		
+		printf "\033[32;1mRequest WARP config... Attempt #2\033[0m\n"
+		result=$(requestConfWARP2)
+		warpGen=$(check_request "$result" 2)
 		if [ "$warpGen" = "Error" ]
 		then
-			printf "\033[32;1mRequest WARP config... Attempt #4\033[0m\n"
-			result=$(requestConfWARP4)
-			warpGen=$(check_request "$result" 4)
-			
+			printf "\033[32;1mRequest WARP config... Attempt #3\033[0m\n"
+			result=$(requestConfWARP3)
+			warpGen=$(check_request "$result" 3)
 			if [ "$warpGen" = "Error" ]
 			then
-				warp_config="Error"
+				printf "\033[32;1mRequest WARP config... Attempt #4\033[0m\n"
+				result=$(requestConfWARP4)
+				warpGen=$(check_request "$result" 4)
+				if [ "$warpGen" = "Error" ]
+				then
+					warp_config="Error"
+				else
+					warp_config=$warpGen
+				fi
 			else
 				warp_config=$warpGen
 			fi
@@ -349,65 +381,29 @@ then
 	else
 		warp_config=$warpGen
 	fi
-else
-	warp_config=$warpGen
-fi
-
-if [ "$warp_config" = "Error" ] 
-then
-	printf "\033[32;1mGenerate config AWG WARP failed...Try again later or manual input parameters AmneziaWG...\033[0m\n"
-	echo "Input manual parameters AmneziaWG? (y/n): "
-	read is_manual_input_parameters
-	if [ "$is_manual_input_parameters" = "y" ] || [ "$is_manual_input_parameters" = "Y" ]
+	
+	if [ "$warp_config" = "Error" ] 
 	then
-		read -r -p "Enter the private key (from [Interface]):"$'\n' PrivateKey
-
-		while true; do
-			read -r -p "Enter internal IP address with subnet, example 192.168.100.5/24 (from [Interface]):"$'\n' Address
-			if echo "$Address" | egrep -oq '^([0-9]{1,3}\.){3}[0-9]{1,3}(/[0-9]+)?$'; then
-				break
-			else
-				echo "This IP is not valid. Please repeat"
-			fi
-		done
-
-		read -r -p "Enter the public key (from [Peer]):"$'\n' PublicKey
-		read -r -p "Enter Endpoint host without port (Domain or IP) (from [Peer]):"$'\n' EndpointIP
-
-		read -r -p "Enter Endpoint host port (from [Peer]) [51820]:"$'\n' EndpointPort
-		read -r -p "Enter Jc value (from [Interface]):"$'\n' Jc
-		read -r -p "Enter Jmin value (from [Interface]):"$'\n' Jmin
-		read -r -p "Enter Jmax value (from [Interface]):"$'\n' Jmax
-		read -r -p "Enter S1 value (from [Interface]):"$'\n' S1
-		read -r -p "Enter S2 value (from [Interface]):"$'\n' S2
-		read -r -p "Enter H1 value (from [Interface]):"$'\n' H1
-		read -r -p "Enter H2 value (from [Interface]):"$'\n' H2
-		read -r -p "Enter H3 value (from [Interface]):"$'\n' H3
-		read -r -p "Enter H4 value (from [Interface]):"$'\n' H4
-		DNS="1.1.1.1"
-		MTU=1280
-		AllowedIPs="0.0.0.0/0"
-	else
 		printf "\033[32;1mGenerate config AWG WARP failed...Try again later...\033[0m\n"
 		exit 1
-	fi
-else
-	while IFS=' = ' read -r line; do
-	if echo "$line" | grep -q "="; then
-		# Разделяем строку по первому вхождению "="
-		key=$(echo "$line" | cut -d'=' -f1 | xargs)  # Убираем пробелы
-		value=$(echo "$line" | cut -d'=' -f2- | xargs)  # Убираем пробелы
-		#echo "key = $key, value = $value"
-		eval "$key=\"$value\""
-	fi
-	done < <(echo "$warp_config")
+	else
+		while IFS=' = ' read -r line; do
+		if echo "$line" | grep -q "="; then
+			# Разделяем строку по первому вхождению "="
+			key=$(echo "$line" | cut -d'=' -f1 | xargs)  # Убираем пробелы
+			value=$(echo "$line" | cut -d'=' -f2- | xargs)  # Убираем пробелы
+			#echo "key = $key, value = $value"
+			eval "$key=\"$value\""
+		fi
+		done < <(echo "$warp_config")
 
-	#вытаскиваем нужные нам данные из распарсинного ответа
-	Address=$(echo "$Address" | cut -d',' -f1)
-	DNS=$(echo "$DNS" | cut -d',' -f1)
-	AllowedIPs=$(echo "$AllowedIPs" | cut -d',' -f1)
-	EndpointIP=$(echo "$Endpoint" | cut -d':' -f1)
-	EndpointPort=$(echo "$Endpoint" | cut -d':' -f2)
+		#вытаскиваем нужные нам данные из распарсинного ответа
+		Address=$(echo "$Address" | cut -d',' -f1)
+		DNS=$(echo "$DNS" | cut -d',' -f1)
+		AllowedIPs=$(echo "$AllowedIPs" | cut -d',' -f1)
+		EndpointIP=$(echo "$Endpoint" | cut -d':' -f1)
+		EndpointPort=$(echo "$Endpoint" | cut -d':' -f2)
+	fi
 fi
 
 printf "\033[32;1mCreate and configure tunnel AmneziaWG WARP...\033[0m\n"
