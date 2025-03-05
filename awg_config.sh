@@ -142,7 +142,7 @@ checkPackageAndInstall()
     fi
 }
 
-requestConfWARP()
+requestConfWARP1()
 {
 	#запрос конфигурации WARP
 	local result=$(curl -w "%{http_code}" 'https://warp.llimonix.pw/api/warp' \
@@ -161,6 +161,110 @@ requestConfWARP()
 	  -H 'sec-ch-ua-platform: "Windows"' \
 	  --data-raw '{"selectedServices":[],"siteMode":"all","deviceType":"computer"}')
 	echo "$result"
+}
+
+requestConfWARP2()
+{
+	#запрос конфигурации WARP
+	local result=$(curl -w "%{http_code}" 'https://topor-warp.vercel.app/generate' \
+	  -H 'Accept: */*' \
+	  -H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
+	  -H 'Connection: keep-alive' \
+	  -H 'Content-Type: application/json' \
+	  -H 'Origin: https://topor-warp.vercel.app' \
+	  -H 'Referer: https://topor-warp.vercel.app/' \
+	  -H 'Sec-Fetch-Dest: empty' \
+	  -H 'Sec-Fetch-Mode: cors' \
+	  -H 'Sec-Fetch-Site: same-origin' \
+	  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
+	  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"' \
+	  -H 'sec-ch-ua-mobile: ?0' \
+	  -H 'sec-ch-ua-platform: "Windows"' \
+	  --data-raw '{"platform":"all"}')
+	echo "$result"
+}
+
+requestConfWARP3()
+{
+	#запрос конфигурации WARP
+	local result=$(curl -w "%{http_code}" 'https://warp-gen.vercel.app/generate-config' \
+		-H 'Accept: */*' \
+		-H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
+		-H 'Connection: keep-alive' \
+		-H 'Referer: https://warp-gen.vercel.app/' \
+		-H 'Sec-Fetch-Dest: empty' \
+		-H 'Sec-Fetch-Mode: cors' \
+		-H 'Sec-Fetch-Site: same-origin' \
+		-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
+		-H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"' \
+		-H 'sec-ch-ua-mobile: ?0' \
+		-H 'sec-ch-ua-platform: "Windows"')
+	echo "$result"
+}
+
+requestConfWARP4()
+{
+	#запрос конфигурации WARP
+	local result=$(curl -w "%{http_code}" 'https://config-generator-warp.vercel.app/warp' \
+	  -H 'Accept: */*' \
+	  -H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
+	  -H 'Connection: keep-alive' \
+	  -H 'Referer: https://config-generator-warp.vercel.app/' \
+	  -H 'Sec-Fetch-Dest: empty' \
+	  -H 'Sec-Fetch-Mode: cors' \
+	  -H 'Sec-Fetch-Site: same-origin' \
+	  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
+	  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"' \
+	  -H 'sec-ch-ua-mobile: ?0' \
+	  -H 'sec-ch-ua-platform: "Windows"')
+	echo "$result"
+}
+
+# Функция для обработки выполнения запроса
+check_request() {
+    local response="$1"
+	local choice="$2"
+	
+    # Извлекаем код состояния
+    response_code="${response: -3}"  # Последние 3 символа - это код состояния
+    response_body="${response%???}"    # Все, кроме последних 3 символов - это тело ответа
+    #echo $response_body
+	#echo $response_code
+    # Проверяем код состояния
+    if [ "$response_code" -eq 200 ]; then
+		case $choice in
+		1)
+			status=$(echo $response_body | jq '.success')
+			#echo "$status"
+			if [ "$status" = "true" ]
+			then
+				content=$(echo $response_body | jq '.content')
+				configBase64=$(echo $content | jq -r '.configBase64')
+				warpGen=$(echo "$configBase64" | base64 -d)
+				echo "$warpGen";
+			else
+				echo "Error"
+			fi
+            ;;
+		2)
+			echo "$response_body"
+            ;;
+		3)
+			content=$(echo $response_body | jq -r '.config')
+			#content=$(echo "$content" | sed 's/\\n/\012/g')
+			echo "$content"
+            ;;
+		4)
+			content=$(echo $response_body | jq -r '.content')  
+            warp_config=$(echo "$content" | base64 -d)
+            echo "$warp_config"
+            ;;
+		*)
+			echo "Error"
+		esac
+	else
+		echo "Error"
+	fi
 }
 
 echo "opkg update"
@@ -210,31 +314,51 @@ then
     done
 fi
 
-#запрос конфигурации WARP
-result=$(requestConfWARP)
-response_code="${result: -3}"
-result="${result%???}"
-#echo "$result"
-if [ ! "$response_code" -eq 200 ]
+warp_config="Error"
+printf "\033[32;1mRequest WARP config... Attempt #1\033[0m\n"
+result=$(requestConfWARP1)
+warpGen=$(check_request "$result" 1)
+
+if [ "$warpGen" = "Error" ]
 then
-	echo "Получить конфигурацию WARP не удалось. Попробуйте позже запустить скрипт."
-	exit 1
+	printf "\033[32;1mRequest WARP config... Attempt #2\033[0m\n"
+	result=$(requestConfWARP2)
+	warpGen=$(check_request "$result" 2)
+
+	if [ "$warpGen" = "Error" ]
+	then
+		printf "\033[32;1mRequest WARP config... Attempt #3\033[0m\n"
+		result=$(requestConfWARP3)
+		warpGen=$(check_request "$result" 3)
+		
+		if [ "$warpGen" = "Error" ]
+		then
+			printf "\033[32;1mRequest WARP config... Attempt #4\033[0m\n"
+			result=$(requestConfWARP4)
+			warpGen=$(check_request "$result" 4)
+			
+			if [ "$warpGen" = "Error" ]
+			then
+				warp_config="Error"
+			else
+				warp_config=$warpGen
+			fi
+		else
+			warp_config=$warpGen
+		fi
+	else
+		warp_config=$warpGen
+	fi
+else
+	warp_config=$warpGen
 fi
-#парсим результат запроса конфигурации WARP
-status=$(echo $result | jq '.success')
-#echo "$status"
-if [ ! "$status" = "true" ]
+
+if [ "$warp_config" = "Error" ] 
 then
-	echo "Получить конфигурацию WARP не удалось. Попробуйте позже запустить скрипт."
+	printf "\033[32;1mGenerate config AWG WARP failed...Try again later...\033[0m\n"
 	exit 1
 fi
 
-#парсим результат запроса конфигурации WARP
-content=$(echo $result | jq '.content')
-configBase64=$(echo $content | jq -r '.configBase64')
-#echo "$result"
-warp_config=$(echo "$configBase64" | base64 -d)
-#echo "$warp_config"
 while IFS=' = ' read -r line; do
     if echo "$line" | grep -q "="; then
         # Разделяем строку по первому вхождению "="
