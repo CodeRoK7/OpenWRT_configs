@@ -1,4 +1,4 @@
-# RouterichAX3000_configs
+# OpewnWRT_configs
 
 Протестировано на роутере Routerich AX 3000 прошивка OpenWrt 23.05.5 r24106-10cc5fcd00
 
