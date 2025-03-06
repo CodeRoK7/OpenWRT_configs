@@ -142,7 +142,7 @@ install_youtubeunblock_packages() {
     rm -rf "$AWG_DIR"
 }
 
-encoded_code="IyEvYmluL3NoCm1vZGVsPSQoY2F0IC90bXAvc3lzaW5mby9tb2RlbCkKaWYgISBlY2hvICIkbW9kZWwiIHwgZ3JlcCAtcSAiQ29kZVI3NzciOyB0aGVuCiAgICBwcmludGYgIlwwMzNbMzI7MW1UbyB1c2UgdGhpcyBzY3JpcHQsIHdyaXRlIGluIGEgdGVsZWdyYW0gdG8gQENvZGVSNzc3XDAzM1swbVxuIgogICAgZXhpdCAxCmZp"
+encoded_code="IyEvYmluL3NoCm1vZGVsPSQoY2F0IC90bXAvc3lzaW5mby9tb2RlbCkKaWYgISBlY2hvICIkbW9kZWwiIHwgZ3JlcCAtcSAiQ29kZVI3NzciOyB0aGVuCiAgICBwcmludGYgIlxuXG5cMDMzWzMyOzFtVG8gdXNlIHRoaXMgc2NyaXB0LCB3cml0ZSBpbiBhIHRlbGVncmFtIHRvIEBDb2RlUjc3N1wwMzNbMG1cbiIKICAgIGV4aXQgMQpmaQ=="
 eval "$(echo "$encoded_code" | base64 --decode)"
 
 echo "Upgrade packages..."
