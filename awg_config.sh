@@ -274,7 +274,7 @@ echo "opkg update"
 opkg update
 
 #проверка и установка пакетов AmneziaWG
-install_awg_packages
+#install_awg_packages
 
 checkPackageAndInstall "jq" "1"
 checkPackageAndInstall "coreutils-base64" "1"
