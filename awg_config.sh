@@ -306,16 +306,9 @@ else
 	[ -f /etc/config/dhcp-opkg ] && cp /etc/config/dhcp /etc/config/dhcp-old && mv /etc/config/dhcp-opkg /etc/config/dhcp
 fi
 
-openwrt_release=$(cat /etc/openwrt_release | grep -Eo [0-9]{2}[.][0-9]{2}[.][0-9]* | cut -d '.' -f 1 | tail -n 1)
-if [ $openwrt_release -ge 24 ]; then
-    if uci get dhcp.@dnsmasq[0].confdir | grep -q /tmp/dnsmasq.d; then
-        echo "confdir alreadt set"
-    else
-        printf "Setting confdir"
-        uci set dhcp.@dnsmasq[0].confdir='/tmp/dnsmasq.d'
-        uci commit dhcp
-    fi
-fi
+printf "Setting confdir dnsmasq"
+uci set dhcp.@dnsmasq[0].confdir='/tmp/dnsmasq.d'
+uci commit dhcp
 
 DIR="/etc/config"
 DIR_BACKUP="/root/backup2"
