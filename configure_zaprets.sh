@@ -142,34 +142,40 @@ install_youtubeunblock_packages() {
     rm -rf "$AWG_DIR"
 }
 
-encoded_code="IyEvYmluL3NoCgppPTEKd2hpbGUgWyAhICIkaSIgPT0gIjQiIF0KZG8KCWVjaG8gIkF0dGVtcHQgIyRpLi4uIgoJcHJpbnRmICJJbnB1dCBwYXNzd29yZDogIgoJcmVhZCAtcyBwYXNzd29yZAoJcHJpbnRmICJcbiIKCglpZiBbICEgIiRwYXNzd29yZCIgPSAiY29kZXIwNzAzMjAyNSIgXSAKCXRoZW4KCQllY2hvICJQYXNzd29yZCBpbmNvcnJlY3QuLi4iCgllbHNlCgkJYnJlYWs7CglmaQoJaT0kKCggJGkgKyAxICkpCmRvbmUKaWYgWyAiJGkiID09ICI0IiBdIAp0aGVuCglwcmludGYgIlwwMzNbMzI7MW1QYXNzd29yZCBpbmNvcnJlY3QuIFRvIHVzZSB0aGlzIHNjcmlwdCwgd3JpdGUgaW4gYSB0ZWxlZ3JhbSB0byBAQ29kZVI3NzdcMDMzWzBtXG4iCglleGl0IDEKZmkKcHJpbnRmICJcMDMzWzMyOzFtUGFzc3dvcmQgY29ycmVjdC4gUnVubmluZyBzY3JpcHQuLi5cMDMzWzBtXG4i"
-eval "$(echo "$encoded_code" | base64 --decode)"
+checkPackageAndInstall()
+{
+    local name="$1"
+    local isRequried="$2"
+    #проверяем установлени ли библиотека $name
+    if opkg list-installed | grep -q $name; then
+        echo "$name already installed..."
+    else
+        echo "$name not installed. Installed $name..."
+        opkg install $name
+		res=$?
+		if [ "$isRequried" = "1" ]; then
+			if [ $res -eq 0 ]; then
+				echo "$name insalled successfully"
+			else
+				echo "Error installing $name. Please, install $name manually and run the script again"
+				exit 1
+			fi
+		fi
+    fi
+}
 
 echo "Upgrade packages..."
 
 opkg update
 
-#проверяем установлени ли библиотека https-dns-proxy
-if opkg list-installed | grep -q https-dns-proxy; then
-    echo "https-dns-proxy already installed..."
-else
-	echo "https-dns-proxy not installed. Installed https-dns-proxy..."
-	opkg install https-dns-proxy
-	if [ $? -eq 0 ]; then
-		echo "https-dns-proxy file installed successfully"
-	else
-		echo "Error installing https-dns-proxy. Please, install https-dns-proxy manually and run the script again"
-		exit 1
-	fi
-fi
+checkPackageAndInstall "coreutils-base64" "1"
 
-if ! opkg list-installed | grep -q luci-app-https-dns-proxy; then
-    opkg install luci-app-https-dns-proxy
-fi
+encoded_code="IyEvYmluL3NoCgppPTEKd2hpbGUgWyAhICIkaSIgPT0gIjQiIF0KZG8KCWVjaG8gIkF0dGVtcHQgIyRpLi4uIgoJcHJpbnRmICJJbnB1dCBwYXNzd29yZDogIgoJcmVhZCAtcyBwYXNzd29yZAoJcHJpbnRmICJcbiIKCglpZiBbICEgIiRwYXNzd29yZCIgPSAiY29kZXIwNzAzMjAyNSIgXSAKCXRoZW4KCQllY2hvICJQYXNzd29yZCBpbmNvcnJlY3QuLi4iCgllbHNlCgkJYnJlYWs7CglmaQoJaT0kKCggJGkgKyAxICkpCmRvbmUKaWYgWyAiJGkiID09ICI0IiBdIAp0aGVuCglwcmludGYgIlwwMzNbMzI7MW1QYXNzd29yZCBpbmNvcnJlY3QuIFRvIHVzZSB0aGlzIHNjcmlwdCwgd3JpdGUgaW4gYSB0ZWxlZ3JhbSB0byBAQ29kZVI3NzdcMDMzWzBtXG4iCglleGl0IDEKZmkKcHJpbnRmICJcMDMzWzMyOzFtUGFzc3dvcmQgY29ycmVjdC4gUnVubmluZyBzY3JpcHQuLi5cMDMzWzBtXG4i"
+eval "$(echo "$encoded_code" | base64 --decode)"
 
-if ! opkg list-installed | grep -q luci-i18n-https-dns-proxy-ru; then
-    opkg install luci-i18n-https-dns-proxy-ru
-fi
+checkPackageAndInstall "https-dns-proxy" "1"
+checkPackageAndInstall "luci-app-https-dns-proxy" "0"
+checkPackageAndInstall "luci-i18n-https-dns-proxy-ru" "0"
 
 install_youtubeunblock_packages
 

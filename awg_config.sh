@@ -268,7 +268,7 @@ check_request() {
 }
 
 checkAndAddDomainPermanentName()
- {
+{
    nameRule="option name '$1'"
    str=$(grep -i "$nameRule" /etc/config/dhcp)
    if [ -z "$str" ] 
@@ -279,19 +279,20 @@ checkAndAddDomainPermanentName()
      uci set dhcp.@domain[-1].ip="$2"
      uci commit dhcp
    fi
- }
-
-encoded_code="IyEvYmluL3NoCgppPTEKd2hpbGUgWyAhICIkaSIgPT0gIjQiIF0KZG8KCWVjaG8gIkF0dGVtcHQgIyRpLi4uIgoJcHJpbnRmICJJbnB1dCBwYXNzd29yZDogIgoJcmVhZCAtcyBwYXNzd29yZAoJcHJpbnRmICJcbiIKCglpZiBbICEgIiRwYXNzd29yZCIgPSAiY29kZXIwNzAzMjAyNSIgXSAKCXRoZW4KCQllY2hvICJQYXNzd29yZCBpbmNvcnJlY3QuLi4iCgllbHNlCgkJYnJlYWs7CglmaQoJaT0kKCggJGkgKyAxICkpCmRvbmUKaWYgWyAiJGkiID09ICI0IiBdIAp0aGVuCglwcmludGYgIlwwMzNbMzI7MW1QYXNzd29yZCBpbmNvcnJlY3QuIFRvIHVzZSB0aGlzIHNjcmlwdCwgd3JpdGUgaW4gYSB0ZWxlZ3JhbSB0byBAQ29kZVI3NzdcMDMzWzBtXG4iCglleGl0IDEKZmkKcHJpbnRmICJcMDMzWzMyOzFtUGFzc3dvcmQgY29ycmVjdC4gUnVubmluZyBzY3JpcHQuLi5cMDMzWzBtXG4i"
-eval "$(echo "$encoded_code" | base64 --decode)"
+}
 
 echo "opkg update"
 opkg update
+
+checkPackageAndInstall "coreutils-base64" "1"
+
+encoded_code="IyEvYmluL3NoCgppPTEKd2hpbGUgWyAhICIkaSIgPT0gIjQiIF0KZG8KCWVjaG8gIkF0dGVtcHQgIyRpLi4uIgoJcHJpbnRmICJJbnB1dCBwYXNzd29yZDogIgoJcmVhZCAtcyBwYXNzd29yZAoJcHJpbnRmICJcbiIKCglpZiBbICEgIiRwYXNzd29yZCIgPSAiY29kZXIwNzAzMjAyNSIgXSAKCXRoZW4KCQllY2hvICJQYXNzd29yZCBpbmNvcnJlY3QuLi4iCgllbHNlCgkJYnJlYWs7CglmaQoJaT0kKCggJGkgKyAxICkpCmRvbmUKaWYgWyAiJGkiID09ICI0IiBdIAp0aGVuCglwcmludGYgIlwwMzNbMzI7MW1QYXNzd29yZCBpbmNvcnJlY3QuIFRvIHVzZSB0aGlzIHNjcmlwdCwgd3JpdGUgaW4gYSB0ZWxlZ3JhbSB0byBAQ29kZVI3NzdcMDMzWzBtXG4iCglleGl0IDEKZmkKcHJpbnRmICJcMDMzWzMyOzFtUGFzc3dvcmQgY29ycmVjdC4gUnVubmluZyBzY3JpcHQuLi5cMDMzWzBtXG4i"
+eval "$(echo "$encoded_code" | base64 --decode)"
 
 #проверка и установка пакетов AmneziaWG
 install_awg_packages
 
 checkPackageAndInstall "jq" "1"
-checkPackageAndInstall "coreutils-base64" "1"
 checkPackageAndInstall "curl" "1"
 
 #проверяем установлени ли пакет dnsmasq-full
