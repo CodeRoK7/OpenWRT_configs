@@ -290,7 +290,7 @@ encoded_code="IyEvYmluL3NoCgppPTEKd2hpbGUgWyAhICIkaSIgPT0gIjQiIF0KZG8KCWVjaG8gIk
 eval "$(echo "$encoded_code" | base64 --decode)"
 
 #проверка и установка пакетов AmneziaWG
-install_awg_packages
+#install_awg_packages
 
 checkPackageAndInstall "jq" "1"
 checkPackageAndInstall "curl" "1"
