@@ -563,6 +563,15 @@ printf  "\033[32;1mRestart service dnsmasq, odhcpd...\033[0m\n"
 service dnsmasq restart
 service odhcpd restart
 
+PACKAGE="podkop"
+REQUIRED_VERSION="0.2.5-1"
+
+INSTALLED_VERSION=$(opkg list-installed | grep "^$PACKAGE" | cut -d ' ' -f 3)
+if [ -n "$INSTALLED_VERSION" ] && [ "$INSTALLED_VERSION" != "$REQUIRED_VERSION" ]; then
+    echo "Version package $PACKAGE not equal $REQUIRED_VERSION. Removed packages..."
+    opkg remove --force-removal-of-dependent-packages $PACKAGE
+fi
+
 path_podkop_config="/etc/config/podkop"
 path_podkop_config_backup="/root/podkop"
 URL="https://raw.githubusercontent.com/CodeRoK7/OpenWRT_configs/refs/heads/main"
