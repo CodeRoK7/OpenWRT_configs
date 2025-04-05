@@ -753,7 +753,7 @@ URL="https://raw.githubusercontent.com/CodeRoK7/OpenWRT_configs/refs/heads/main"
 
 case $varByPass in
 1)
-	nameFileReplacePodkop="podkop"
+	nameFileReplacePodkop="podkop_opera"
 	printf  "\033[32;1mStop and disabled service 'youtubeUnblock' and 'ruantiblock'...\033[0m\n"
 	manage_package "youtubeUnblock" "disable" "stop"
 	manage_package "ruantiblock" "disable" "stop"
