@@ -720,7 +720,7 @@ else
 	opkg upgrade youtubeUnblock
 	opkg upgrade luci-app-youtubeUnblock
     manage_package "youtubeUnblock" "enable" "start"
-	wget -O "/etc/config/youtubeUnblock" "$URL/config_files/youtubeUnblockSecond"
+	wget -O "/etc/config/youtubeUnblock" "$URL/config_files/youtubeUnblockSecondDiscord"
 	service youtubeUnblock restart
 	curl -f -o /dev/null -k --connect-to ::google.com -L -H "Host: mirror.gcr.io" --max-time 360 https://test.googlevideo.com/v2/cimg/android/blobs/sha256:6fd8bdac3da660bde7bd0b6f2b6a46e1b686afb74b9a4614def32532b73f5eaa
 
