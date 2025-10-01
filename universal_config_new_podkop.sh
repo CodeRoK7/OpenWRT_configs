@@ -539,6 +539,7 @@ install_packages "luci-app-stubby_0.9.3-r1_all.ipk"
 install_packages "luci-i18n-stubby-ru_25.171.67236~1ae1f52_all.ipk"
 install_packages "doh-proxy_2025.07.01-r1_aarch64_cortex-a53.ipk"
 install_packages "luci-app-doh-proxy_2025.07.01-r1_all.ipk"
+install_packages "luci-i18n-doh-proxy-ru_25.184.36164~152d511_all.ipk"
 install_packages "luci-app-dns-failsafe-proxy_1.0.4_all.ipk"
 
 findVersion="1.12.0"
