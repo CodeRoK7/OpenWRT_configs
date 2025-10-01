@@ -465,17 +465,18 @@ install_youtubeunblock_packages() {
 install_packages() {
     BASE_URL="https://raw.githubusercontent.com/CodeRoK7/OpenWRT_configs/refs/heads/main/packets/"
   	PACK_NAME="$1"
-	
-    AWG_DIR="/tmp/"
+	PACK_NAME_SHORT=$(echo "$PACK_NAME" | cut -d'_' -f1)
+
+    AWG_DIR="/tmp/$PACK_NAME_SHORT"
     mkdir -p "$AWG_DIR"
     
-    if opkg list-installed | grep -q $PACK_NAME; then
-        echo "$PACK_NAME already installed"
+    if opkg list-installed | grep -q $PACK_NAME_SHORT; then
+        echo "$PACK_NAME_SHORT already installed"
     else
         
-        DOWNLOAD_URL="${BASE_URL}${YOUTUBEUNBLOCK_FILENAME}"
+        DOWNLOAD_URL="${BASE_URL}${PACK_NAME}"
 		echo $DOWNLOAD_URL
-        wget -O "$AWG_DIR/$YOUTUBEUNBLOCK_FILENAME" "$DOWNLOAD_URL"
+        wget -O "$AWG_DIR/$PACK_NAME" "$DOWNLOAD_URL"
 
         if [ $? -eq 0 ]; then
             echo "$PACK_NAME file downloaded successfully"
@@ -484,7 +485,7 @@ install_packages() {
             exit 1
         fi
         
-        opkg install "$AWG_DIR/$YOUTUBEUNBLOCK_FILENAME"
+        opkg install "$AWG_DIR/$PACK_NAME"
 
         if [ $? -eq 0 ]; then
             echo "$PACK_NAME file installing successfully"
@@ -494,33 +495,6 @@ install_packages() {
         fi
     fi
 	
-	PACK_NAME="luci-app-youtubeUnblock"
-	if opkg list-installed | grep -q $PACK_NAME; then
-        echo "$PACK_NAME already installed"
-    else
-		PACK_NAME="luci-app-youtubeUnblock"
-		YOUTUBEUNBLOCK_FILENAME="luci-app-youtubeUnblock-1.1.0-1-473af29.ipk"
-        DOWNLOAD_URL="${BASE_URL}${YOUTUBEUNBLOCK_FILENAME}"
-		echo $DOWNLOAD_URL
-        wget -O "$AWG_DIR/$YOUTUBEUNBLOCK_FILENAME" "$DOWNLOAD_URL"
-		
-        if [ $? -eq 0 ]; then
-            echo "$PACK_NAME file downloaded successfully"
-        else
-            echo "Error downloading $PACK_NAME. Please, install $PACK_NAME manually and run the script again"
-            exit 1
-        fi
-        
-        opkg install "$AWG_DIR/$YOUTUBEUNBLOCK_FILENAME"
-
-        if [ $? -eq 0 ]; then
-            echo "$PACK_NAME file installing successfully"
-        else
-            echo "Error installing $PACK_NAME. Please, install $PACK_NAME manually and run the script again"
-            exit 1
-        fi
-	fi
-
     rm -rf "$AWG_DIR"
 }
 
@@ -551,8 +525,20 @@ eval "$(echo "$encoded_code" | base64 --decode)"
 checkPackageAndInstall "jq" "1"
 checkPackageAndInstall "curl" "1"
 checkPackageAndInstall "unzip" "1"
-checkPackageAndInstall "opera-proxy" "1"
-checkPackageAndInstall "zapret" "1"
+checkPackageAndInstall "stubby" "1"
+
+install_packages "opera-proxy_1.10.0-r1_aarch64_cortex-a53.ipk"
+install_packages "zapret_71.20250708_aarch64_cortex-a53.ipk"
+install_packages "luci-app-zapret_71.20250708-r1_all.ipk"
+install_packages "luci-app-zapret_71.20250708-r1_all.ipk"
+install_packages "kmod-amneziawg_6.6.104.1.0.20250924-r1_aarch64_cortex-a53.ipk"
+install_packages "amneziawg-tools_1.0.20250903-r1_aarch64_cortex-a53.ipk"
+install_packages "luci-app-amneziawg_2.0.5-r1_all.ipk"
+install_packages "luci-i18n-amneziawg-ru_25.273.39265~a4ea36f_all.ipk"
+install_packages "luci-app-stubby_0.9.3-r1_all.ipk"
+install_packages "doh-proxy_2025.07.01-r1_aarch64_cortex-a53.ipk"
+install_packages "luci-app-doh-proxy_2025.07.01-r1_all.ipk"
+install_packages "luci-app-dns-failsafe-proxy_1.0.4_all.ipk"
 
 findVersion="1.12.0"
 if opkg list-installed | grep "^sing-box" && printf '%s\n%s\n' "$findVersion" "$VERSION" | sort -V | tail -n1 | grep -qx -- "$VERSION"; then
@@ -564,12 +550,6 @@ else
 	checkPackageAndInstall "sing-box" "1"
 fi
 
-opkg upgrade amneziawg-tools
-opkg upgrade kmod-amneziawg
-opkg upgrade luci-app-amneziawg
-
-opkg upgrade zapret
-opkg upgrade luci-app-zapret
 manage_package "zapret" "enable" "start"
 
 #проверяем установлени ли пакет dnsmasq-full
