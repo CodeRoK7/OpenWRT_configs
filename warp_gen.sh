@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#clear
-#mkdir -p ~/.cloudshell && touch ~/.cloudshell/no-apt-get-warning # Для Google Cloud Shell, но лучше там не выполнять
-#echo "Установка зависимостей..."
-#apt update -y && apt install sudo -y # Для Aeza Terminator, там sudo не установлен по умолчанию
-#sudo apt-get update -y --fix-missing && sudo apt-get install wireguard-tools jq wget qrencode -y --fix-missing # Update второй раз, если sudo установлен и обязателен (в строке выше не сработал)
+clear
+mkdir -p ~/.cloudshell && touch ~/.cloudshell/no-apt-get-warning # Для Google Cloud Shell, но лучше там не выполнять
+echo "Установка зависимостей..."
+apt update -y && apt install sudo -y # Для Aeza Terminator, там sudo не установлен по умолчанию
+sudo apt-get update -y --fix-missing && sudo apt-get install wireguard-tools jq wget qrencode -y --fix-missing # Update второй раз, если sudo установлен и обязателен (в строке выше не сработал)
 
 priv="${1:-$(wg genkey)}"
 pub="${2:-$(echo "${priv}" | wg pubkey)}"
@@ -51,3 +51,12 @@ echo -e "\n\n\n"
 [ -t 1 ] && echo "########## НАЧАЛО КОНФИГА ##########"
 echo "${conf}"
 [ -t 1 ] && echo "########### КОНЕЦ КОНФИГА ###########"
+
+echo -e "\nОтсканируйте QR код конфигурации с помощью приложения AmneziaWG на смартфон:\n"
+echo "$conf" | qrencode -t utf8
+echo -e "\n"
+conf_base64=$(echo -n "${conf}" | base64 -w 0)
+echo "Скачать конфиг файлом: https://knowerlife.github.io/downloader.html?filename=WARP.conf&content=${conf_base64}"
+echo "Импортируйте конфиг в приложение AmneziaVPN или DefaultVPN! Приложение AmneziaWG не поддерживает этот формат!"
+echo -e "\n"
+echo "Что-то не получилось? Есть вопросы? Пишите в чат: https://t.me/KnowerLifeBot"
