@@ -9,7 +9,7 @@ sudo apt-get update -y --fix-missing && sudo apt-get install wireguard-tools jq 
 priv="${1:-$(wg genkey)}"
 pub="${2:-$(echo "${priv}" | wg pubkey)}"
 api="https://api.cloudflareclient.com/v0i1909051800"
-ins() { curl -s -H 'user-agent:' -H 'content-type: application/json' -X "$1" "${api}/$2" "${@:3}"; }
+ins() { curl -s -H 'user-agent:' -H 'content-type: application/json' -X "$1" "${api}/$2" "${@:3}"; echo "curl -s -H 'user-agent:' -H 'content-type: application/json' -X "$1" "${api}/$2" "${@:3}";"}
 sec() { ins "$1" "$2" -H "authorization: Bearer $3" "${@:4}"; }
 response=$(ins POST "reg" -d "{\"install_id\":\"\",\"tos\":\"$(date -u +%FT%T.000Z)\",\"key\":\"${pub}\",\"fcm_token\":\"\",\"type\":\"ios\",\"locale\":\"en_US\"}")
 
@@ -51,12 +51,3 @@ echo -e "\n\n\n"
 [ -t 1 ] && echo "########## НАЧАЛО КОНФИГА ##########"
 echo "${conf}"
 [ -t 1 ] && echo "########### КОНЕЦ КОНФИГА ###########"
-
-echo -e "\nОтсканируйте QR код конфигурации с помощью приложения AmneziaWG на смартфон:\n"
-echo "$conf" | qrencode -t utf8
-echo -e "\n"
-conf_base64=$(echo -n "${conf}" | base64 -w 0)
-echo "Скачать конфиг файлом: https://knowerlife.github.io/downloader.html?filename=WARP.conf&content=${conf_base64}"
-echo "Импортируйте конфиг в приложение AmneziaVPN или DefaultVPN! Приложение AmneziaWG не поддерживает этот формат!"
-echo -e "\n"
-echo "Что-то не получилось? Есть вопросы? Пишите в чат: https://t.me/KnowerLifeBot"
