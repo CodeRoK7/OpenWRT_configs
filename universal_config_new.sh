@@ -144,80 +144,74 @@ checkPackageAndInstall()
 
 requestConfWARP1()
 {
-	#запрос конфигурации WARP
-	local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://warp.llimonix.pw/api/warp' \
-	  -H 'Accept: */*' \
-	  -H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
-	  -H 'Connection: keep-alive' \
-	  -H 'Content-Type: application/json' \
-	  -H 'Origin: https://warp.llimonix.pw' \
-	  -H 'Referer: https://warp.llimonix.pw/' \
-	  -H 'Sec-Fetch-Dest: empty' \
-	  -H 'Sec-Fetch-Mode: cors' \
-	  -H 'Sec-Fetch-Site: same-origin' \
-	  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
-	  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133")' \
-	  -H 'sec-ch-ua-mobile: ?0' \
-	  -H 'sec-ch-ua-platform: "Windows"' \
-	  --data-raw '{"selectedServices":[],"siteMode":"all","deviceType":"computer"}')
-	echo "$result"
+  #запрос конфигурации WARP
+  local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://generator-warp-config.vercel.app/warp4s?dns=1.1.1.1%2C%201.0.0.1%2C%202606%3A4700%3A4700%3A%3A1111%2C%202606%3A4700%3A4700%3A%3A1001&allowedIPs=0.0.0.0%2F0%2C%20%3A%3A%2F0' \
+    -H 'accept: */*' \
+    -H 'accept-language: ru-RU,ru;q=0.9' \
+    -H 'referer: https://generator-warp-config.vercel.app')
+  echo "$result"
 }
 
 requestConfWARP2()
 {
-	#запрос конфигурации WARP
-	local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://topor-warp.vercel.app/generate' \
-	  -H 'Accept: */*' \
-	  -H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
-	  -H 'Connection: keep-alive' \
-	  -H 'Content-Type: application/json' \
-	  -H 'Origin: https://topor-warp.vercel.app' \
-	  -H 'Referer: https://topor-warp.vercel.app/' \
-	  -H 'Sec-Fetch-Dest: empty' \
-	  -H 'Sec-Fetch-Mode: cors' \
-	  -H 'Sec-Fetch-Site: same-origin' \
-	  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
-	  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"' \
-	  -H 'sec-ch-ua-mobile: ?0' \
-	  -H 'sec-ch-ua-platform: "Windows"' \
-	  --data-raw '{"platform":"all"}')
-	echo "$result"
+  #запрос конфигурации WARP
+  local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://valokda-amnezia.vercel.app/api/warp' \
+    -H 'accept: */*' \
+    -H 'accept-language: ru-RU,ru;q=0.9' \
+    -H 'referer: https://valokda-amnezia.vercel.app/api/warp')
+  echo "$result"
 }
 
 requestConfWARP3()
 {
-	#запрос конфигурации WARP
-	local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://warp-gen.vercel.app/generate-config' \
-		-H 'Accept: */*' \
-		-H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
-		-H 'Connection: keep-alive' \
-		-H 'Referer: https://warp-gen.vercel.app/' \
-		-H 'Sec-Fetch-Dest: empty' \
-		-H 'Sec-Fetch-Mode: cors' \
-		-H 'Sec-Fetch-Site: same-origin' \
-		-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
-		-H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"' \
-		-H 'sec-ch-ua-mobile: ?0' \
-		-H 'sec-ch-ua-platform: "Windows"')
-	echo "$result"
+  #запрос конфигурации WARP
+  local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://warp-gen.vercel.app/generate-config' \
+    -H 'accept: */*' \
+    -H 'accept-language: ru-RU,ru;q=0.9' \
+    -H 'referer: https://warp-gen.vercel.app/generate-config')
+  echo "$result"
 }
 
 requestConfWARP4()
 {
-	#запрос конфигурации WARP
-	local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://config-generator-warp.vercel.app/warp' \
-	  -H 'Accept: */*' \
-	  -H 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
-	  -H 'Connection: keep-alive' \
-	  -H 'Referer: https://config-generator-warp.vercel.app/' \
-	  -H 'Sec-Fetch-Dest: empty' \
-	  -H 'Sec-Fetch-Mode: cors' \
-	  -H 'Sec-Fetch-Site: same-origin' \
-	  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' \
-	  -H 'sec-ch-ua: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"' \
-	  -H 'sec-ch-ua-mobile: ?0' \
-	  -H 'sec-ch-ua-platform: "Windows"')
-	echo "$result"
+  #запрос конфигурации WARP
+  local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://config-generator-warp.vercel.app/warps' \
+    -H 'accept: */*' \
+    -H 'accept-language: ru-RU,ru;q=0.9' \
+    -H 'referer: https://config-generator-warp.vercel.app/')
+  echo "$result"
+}
+
+requestConfWARP5()
+{
+  #запрос конфигурации WARP без параметров
+  local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://config-generator-warp.vercel.app/warp6s' \
+    -H 'accept: */*' \
+    -H 'accept-language: ru-RU,ru;q=0.9' \
+    -H 'referer: https://config-generator-warp.vercel.app/')
+  echo "$result"
+}
+
+requestConfWARP6()
+{
+  #запрос конфигурации WARP без параметров
+  local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://config-generator-warp.vercel.app/warp4s' \
+    -H 'accept: */*' \
+    -H 'accept-language: ru-RU,ru;q=0.9' \
+    -H 'referer: https://config-generator-warp.vercel.app/')
+  echo "$result"
+}
+
+requestConfWARP7()
+{
+  #запрос конфигурации WARP
+  local result=$(curl --connect-timeout 20 --max-time 60 -w "%{http_code}" 'https://warp-generator.vercel.app/api/warp' \
+    -H 'accept: */*' \
+    -H 'accept-language: ru-RU,ru;q=0.6' \
+    -H 'content-type: application/json' \
+    -H 'referer: https://warp-generator.vercel.app/' \
+    --data-raw '{"selectedServices":[],"siteMode":"all","deviceType":"computer"}')
+  echo "$result"
 }
 
 # Функция для обработки выполнения запроса
@@ -234,28 +228,37 @@ check_request() {
     if [ "$response_code" -eq 200 ]; then
 		case $choice in
 		1)
-			status=$(echo $response_body | jq '.success')
-			#echo "$status"
-			if [ "$status" = "true" ]
-			then
-				content=$(echo $response_body | jq '.content')
-				configBase64=$(echo $content | jq -r '.configBase64')
-				warpGen=$(echo "$configBase64" | base64 -d)
-				echo "$warpGen";
-			else
-				echo "Error"
-			fi
+			content=$(echo $response_body | jq -r '.content')    
+            warp_config=$(echo "$content" | base64 -d)
+            echo "$warp_config"
             ;;
 		2)
-			echo "$response_body"
+			content=$(echo $response_body | jq -r '.content')    
+            warp_config=$(echo "$content" | base64 -d)
+            echo "$warp_config"
             ;;
 		3)
-			content=$(echo $response_body | jq -r '.config')
-			#content=$(echo "$content" | sed 's/\\n/\012/g')
-			echo "$content"
+			content=$(echo $response_body | jq -r '.config')    
+            echo "$content"
             ;;
 		4)
+			content=$(echo $response_body | jq -r '.content')    
+            warp_config=$(echo "$content" | base64 -d)
+            echo "$warp_config"
+            ;;
+		5)
 			content=$(echo $response_body | jq -r '.content')  
+            warp_config=$(echo "$content" | base64 -d)
+            echo "$warp_config"
+            ;;
+		6)
+			content=$(echo $response_body | jq -r '.content')
+			warp_config=$(echo "$content" | base64 -d)
+            echo "$warp_config"
+            ;;
+		7)
+			content=$(echo $response_body | jq -r '.content')  
+			content=$(echo $content | jq -r '.configBase64')  
             warp_config=$(echo "$content" | base64 -d)
             echo "$warp_config"
             ;;
@@ -713,7 +716,31 @@ do
 					warpGen=$(check_request "$result" 4)
 					if [ "$warpGen" = "Error" ]
 					then
-						warp_config="Error"
+						printf "\033[32;1mRequest WARP config... Attempt #5\033[0m\n"
+						result=$(requestConfWARP5)
+						warpGen=$(check_request "$result" 5)
+						if [ "$warpGen" = "Error" ]
+						then
+							printf "\033[32;1mRequest WARP config... Attempt #6\033[0m\n"
+							result=$(requestConfWARP6)
+							warpGen=$(check_request "$result" 6)
+							if [ "$warpGen" = "Error" ]
+							then
+								printf "\033[32;1mRequest WARP config... Attempt #7\033[0m\n"
+								result=$(requestConfWARP7)
+								warpGen=$(check_request "$result" 7)
+								if [ "$warpGen" = "Error" ]
+								then
+									warp_config="Error"
+								else
+									warp_config=$warpGen
+								fi
+							else
+								warp_config=$warpGen
+							fi
+						else
+							warp_config=$warpGen
+						fi
 					else
 						warp_config=$warpGen
 					fi
