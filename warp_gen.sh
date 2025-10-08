@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 clear
 mkdir -p ~/.cloudshell && touch ~/.cloudshell/no-apt-get-warning # Для Google Cloud Shell, но лучше там не выполнять
 echo "Установка зависимостей..."
@@ -25,8 +27,8 @@ sec() { ins "$1" "$2" -H "authorization: Bearer $3" "${@:4}"; }
 response=$(ins POST "reg" -d "{\"install_id\":\"\",\"tos\":\"$(date -u +%FT%T.000Z)\",\"key\":\"${pub}\",\"fcm_token\":\"\",\"type\":\"ios\",\"locale\":\"en_US\"}")
 
 #clear
-res=$(ins2 POST "reg" -d "{\"install_id\":\"\",\"tos\":\"$(date -u +%FT%T.000Z)\",\"key\":\"${pub}\",\"fcm_token\":\"\",\"type\":\"ios\",\"locale\":\"en_US\"}")
-echo $res
+#res=$(ins2 POST "reg" -d "{\"install_id\":\"\",\"tos\":\"$(date -u +%FT%T.000Z)\",\"key\":\"${pub}\",\"fcm_token\":\"\",\"type\":\"ios\",\"locale\":\"en_US\"}")
+#echo $res
 id=$(echo "$response" | jq -r '.result.id')
 token=$(echo "$response" | jq -r '.result.token')
 response=$(sec PATCH "reg/${id}" "$token" -d '{"warp_enabled":true}')
