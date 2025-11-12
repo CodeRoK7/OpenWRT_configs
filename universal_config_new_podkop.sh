@@ -655,13 +655,13 @@ install_packages "luci-i18n-doh-proxy-ru_25.184.36164~152d511_all.ipk"
 install_packages "luci-app-dns-failsafe-proxy_1.0.4_all.ipk"
 
 findVersion="1.12.0"
-if opkg list-installed | grep "^sing-box" && printf '%s\n%s\n' "$findVersion" "$VERSION" | sort -V | tail -n1 | grep -qx -- "$VERSION"; then
-	printf "\033[32;1mInstalled new sing-box. Running scprit...\033[0m\n"
+if opkg list-installed | grep "^sing-box-tiny" && printf '%s\n%s\n' "$findVersion" "$VERSION" | sort -V | tail -n1 | grep -qx -- "$VERSION"; then
+	printf "\033[32;1mInstalled new sing-box-tiny. Running scprit...\033[0m\n"
 else
-	printf "\033[32;1mInstalled old sing-box or not install sing-box. Reinstall sing-box...\033[0m\n"
+	printf "\033[32;1mInstalled old sing-box-tiny or not install sing-box-tiny. Reinstall sing-box-tiny...\033[0m\n"
 	manage_package "podkop" "enable" "stop"
-	opkg remove --force-removal-of-dependent-packages "sing-box"
-	checkPackageAndInstall "sing-box" "1"
+	opkg remove --force-removal-of-dependent-packages "sing-box-tiny"
+	checkPackageAndInstall "sing-box-tiny" "1"
 fi
 
 #проверяем установлени ли пакет dnsmasq-full
@@ -675,6 +675,12 @@ else
 	[ -f /etc/config/dhcp-opkg ] && cp /etc/config/dhcp /etc/config/dhcp-old && mv /etc/config/dhcp-opkg /etc/config/dhcp
 fi
 
+#проверяем установлени ли пакет https-dns-proxy
+if opkg list-installed | grep -q https-dns-proxy; then
+	echo "Delete packet https-dns-proxy..."
+	opkg remove --force-removal-of-dependent-packages "https-dns-proxy"
+fi
+
 printf "Setting confdir dnsmasq\n"
 uci set dhcp.@dnsmasq[0].confdir='/tmp/dnsmasq.d'
 uci commit dhcp
@@ -686,7 +692,8 @@ firewall
 doh-proxy
 zapret
 dhcp
-dns-failsafe-proxy"
+dns-failsafe-proxy
+stubby"
 URL="https://raw.githubusercontent.com/CodeRoK7/OpenWRT_configs/refs/heads/main"
 
 checkPackageAndInstall "luci-app-dns-failsafe-proxy" "1"
@@ -705,7 +712,7 @@ then
 
 	for file in $config_files
 	do
-		if [ "$file" == "doh-proxy" ] || [ "$file" == "dns-failsafe-proxy" ]
+		if [ "$file" == "doh-proxy" ] || [ "$file" == "dns-failsafe-proxy" ] || [ "$file" == "stubby" ]
 		then 
 		  wget -O "$DIR/$file" "$URL/config_files/$file" 
 		fi
@@ -841,7 +848,7 @@ fi
 isWorkOperaProxy=0
 printf "\033[32;1mCheck opera proxy...\033[0m\n"
 service sing-box restart
-sing-box tools fetch ifconfig.co -D /etc/sing-box/
+curl --proxy http://127.0.0.1:18080 ipinfo.io/ip
 if [ $? -eq 0 ]; then
 	printf "\033[32;1mOpera proxy well work...\033[0m\n"
 	isWorkOperaProxy=1
@@ -1276,7 +1283,7 @@ case $varByPass in
 esac
 
 PACKAGE="podkop"
-REQUIRED_VERSION="v0.5.6-r1"
+REQUIRED_VERSION="v0.7.7-r1"
 
 INSTALLED_VERSION=$(opkg list-installed | grep "^$PACKAGE" | cut -d ' ' -f 3)
 if [ -n "$INSTALLED_VERSION" ] && [ "$INSTALLED_VERSION" != "$REQUIRED_VERSION" ]; then
@@ -1302,9 +1309,9 @@ else
 	if [ "$is_install_podkop" = "y" ] || [ "$is_install_podkop" = "Y" ]; then
 		DOWNLOAD_DIR="/tmp/podkop"
 		mkdir -p "$DOWNLOAD_DIR"
-		podkop_files="podkop_v0.5.6-r1_all.ipk
-			luci-app-podkop_v0.5.6-r1_all.ipk
-			luci-i18n-podkop-ru_0.5.6.ipk"
+		podkop_files="podkop-v0.7.7-r1-all.ipk
+			luci-app-podkop-v0.7.7-r1-all.ipk
+			luci-i18n-podkop-ru-0.7.7.ipk"
 		for file in $podkop_files
 		do
 			echo "Download $file..."
