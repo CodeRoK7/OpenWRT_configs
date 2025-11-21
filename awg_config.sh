@@ -831,7 +831,7 @@ else
 		for file in $podkop_files
 		do
 			echo "Download $file..."
-			wget -q -O "$DOWNLOAD_DIR/$file" "$URL/podkop_packets/$file"
+			wget -q -O "$DOWNLOAD_DIR/$file" "$URL/packets/$file"
 		done
 		opkg install $DOWNLOAD_DIR/podkop*.ipk
 		opkg install $DOWNLOAD_DIR/luci-app-podkop*.ipk
