@@ -634,8 +634,8 @@ eval "$(echo "$encoded_code" | base64 --decode)"
 #проверка и установка пакетов AmneziaWG
 #install_awg_packages
 
-opkg remove zapret luci-app-zapret
-rm -r /opt/zapret
+#opkg remove zapret luci-app-zapret
+#rm -r /opt/zapret
 
 checkPackageAndInstall "jq" "1"
 checkPackageAndInstall "curl" "1"
@@ -643,9 +643,8 @@ checkPackageAndInstall "unzip" "1"
 checkPackageAndInstall "stubby" "1"
 
 install_packages "opera-proxy_1.10.0-r1_aarch64_cortex-a53.ipk"
-install_packages "zapret_71.20250708_aarch64_cortex-a53.ipk"
-install_packages "luci-app-zapret_71.20250708-r1_all.ipk"
-install_packages "luci-app-zapret_71.20250708-r1_all.ipk"
+install_packages "zapret_72.20251122_aarch64_cortex-a53.ipk"
+install_packages "luci-app-zapret_72.20251122-r1_all.ipk"
 install_packages "kmod-amneziawg_6.6.104.1.0.20250924-r1_aarch64_cortex-a53.ipk"
 install_packages "amneziawg-tools_1.0.20250903-r1_aarch64_cortex-a53.ipk"
 install_packages "luci-app-amneziawg_2.0.5-r1_all.ipk"
