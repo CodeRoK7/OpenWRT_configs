@@ -799,6 +799,7 @@ wget -O "/etc/config/zapret" "$URL/config_files/zapret"
 wget -O "/opt/zapret/ipset/zapret-hosts-user.txt" "$URL/config_files/zapret-hosts-user.txt"
 wget -O "/opt/zapret/init.d/openwrt/custom.d/50-stun4all" "$URL/config_files/50-stun4all"
 chmod +x "/opt/zapret/init.d/openwrt/custom.d/50-stun4all"
+sh /opt/zapret/sync_config.sh
 
 manage_package "podkop" "enable" "stop"
 manage_package "youtubeUnblock" "disable" "stop"
