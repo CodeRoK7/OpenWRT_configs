@@ -30,7 +30,7 @@ install_awg_packages() {
         opkg install "$AWG_DIR/$KMOD_AMNEZIAWG_FILENAME"
 
         if [ $? -eq 0 ]; then
-            echo "kmod-amneziawg file downloaded successfully"
+            echo "kmod-amneziawg file installed successfully"
         else
             echo "Error installing kmod-amneziawg. Please, install kmod-amneziawg manually and run the script again"
             exit 1
@@ -54,13 +54,14 @@ install_awg_packages() {
         opkg install "$AWG_DIR/$AMNEZIAWG_TOOLS_FILENAME"
 
         if [ $? -eq 0 ]; then
-            echo "amneziawg-tools file downloaded successfully"
+            echo "amneziawg-tools file intalled successfully"
         else
             echo "Error installing amneziawg-tools. Please, install amneziawg-tools manually and run the script again"
             exit 1
         fi
     fi
     
+    errAwg=0
     if opkg list-installed | grep -q luci-app-amneziawg; then
         echo "luci-app-amneziawg already installed"
     else
@@ -72,17 +73,43 @@ install_awg_packages() {
             echo "luci-app-amneziawg file downloaded successfully"
         else
             echo "Error downloading luci-app-amneziawg. Please, install luci-app-amneziawg manually and run the script again"
-            exit 1
+            errAwg=1
         fi
 
         opkg install "$AWG_DIR/$LUCI_APP_AMNEZIAWG_FILENAME"
 
         if [ $? -eq 0 ]; then
-            echo "luci-app-amneziawg file downloaded successfully"
+            echo "luci-app-amneziawg file installed successfully"
         else
             echo "Error installing luci-app-amneziawg. Please, install luci-app-amneziawg manually and run the script again"
-            exit 1
+            errAwg=1
         fi
+    fi
+
+    if [ $errAwg -eq 1 ]; then
+      if opkg list-installed | grep -q luci-proto-amneziawg; then
+          echo "luci-proto-amneziawg already installed"
+      else
+          LUCI_PHOTO_AMNEZIAWG_FILENAME="luci-proto-amneziawg${PKGPOSTFIX}"
+          DOWNLOAD_URL="${BASE_URL}v${VERSION}/${LUCI_PHOTO_AMNEZIAWG_FILENAME}"
+          wget -O "$AWG_DIR/$LUCI_PHOTO_AMNEZIAWG_FILENAME" "$DOWNLOAD_URL"
+
+          if [ $? -eq 0 ]; then
+              echo "luci-proto-amneziawg file downloaded successfully"
+          else
+              echo "Error downloading luci-proto-amneziawg. Please, install luci-proto-amneziawg manually and run the script again"
+              exit 1
+          fi
+
+          opkg install "$AWG_DIR/$LUCI_PHOTO_AMNEZIAWG_FILENAME"
+
+          if [ $? -eq 0 ]; then
+              echo "luci-proto-amneziawg file installed successfully"
+          else
+              echo "Error installing luci-proto-amneziawg. Please, install luci-proto-amneziawg manually and run the script again"
+              exit 1
+          fi
+      fi
     fi
 
     rm -rf "$AWG_DIR"
@@ -645,10 +672,11 @@ checkPackageAndInstall "stubby" "1"
 install_packages "opera-proxy_1.10.0-r1_aarch64_cortex-a53.ipk"
 install_packages "zapret_72.20251122_aarch64_cortex-a53.ipk"
 install_packages "luci-app-zapret_72.20251122-r1_all.ipk"
-install_packages "kmod-amneziawg_6.6.104.1.0.20250924-r1_aarch64_cortex-a53.ipk"
-install_packages "amneziawg-tools_1.0.20250903-r1_aarch64_cortex-a53.ipk"
-install_packages "luci-app-amneziawg_2.0.5-r1_all.ipk"
-install_packages "luci-i18n-amneziawg-ru_25.273.39265~a4ea36f_all.ipk"
+#install_packages "kmod-amneziawg_6.6.104.1.0.20250924-r1_aarch64_cortex-a53.ipk"
+#install_packages "amneziawg-tools_1.0.20250903-r1_aarch64_cortex-a53.ipk"
+#install_packages "luci-app-amneziawg_2.0.5-r1_all.ipk"
+#install_packages "luci-i18n-amneziawg-ru_25.273.39265~a4ea36f_all.ipk"
+install_awg_packages
 install_packages "luci-app-stubby_0.9.3-r1_all.ipk"
 install_packages "luci-i18n-stubby-ru_25.171.67236~1ae1f52_all.ipk"
 install_packages "doh-proxy_2025.07.01-r1_aarch64_cortex-a53.ipk"
