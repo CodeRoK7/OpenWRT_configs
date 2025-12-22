@@ -669,7 +669,7 @@ checkPackageAndInstall "curl" "1"
 checkPackageAndInstall "unzip" "1"
 checkPackageAndInstall "stubby" "1"
 
-install_packages "opera-proxy_1.10.0-r1_aarch64_cortex-a53.ipk"
+install_packages "opera-proxy_1.13.1-r1_aarch64_cortex-a53.ipk"
 install_packages "zapret_72.20251122_aarch64_cortex-a53.ipk"
 install_packages "luci-app-zapret_72.20251122-r1_all.ipk"
 #install_packages "kmod-amneziawg_6.6.104.1.0.20250924-r1_aarch64_cortex-a53.ipk"
