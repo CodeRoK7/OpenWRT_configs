@@ -672,6 +672,7 @@ checkPackageAndInstall "stubby" "1"
 install_packages "opera-proxy_1.13.1-r1_aarch64_cortex-a53.ipk"
 install_packages "zapret_72.20251227-r1_aarch64_cortex-a53.ipk"
 install_packages "luci-app-zapret_72.20251227-r1_all.ipk"
+manage_package "zapret" "enable" "stop"
 #install_packages "kmod-amneziawg_6.6.104.1.0.20250924-r1_aarch64_cortex-a53.ipk"
 #install_packages "amneziawg-tools_1.0.20250903-r1_aarch64_cortex-a53.ipk"
 #install_packages "luci-app-amneziawg_2.0.5-r1_all.ipk"
@@ -831,7 +832,7 @@ printf "\033[32;1mCheck work zapret.\033[0m\n"
 #install_youtubeunblock_packages
 opkg upgrade zapret
 opkg upgrade luci-app-zapret
-manage_package "zapret" "enable" "start"
+manage_package "zapret" "enable" "stop"
 wget -O "/etc/config/zapret" "$URL/config_files/zapret"
 wget -O "/opt/zapret/ipset/zapret-hosts-user.txt" "$URL/config_files/zapret-hosts-user.txt"
 wget -O "/opt/zapret/init.d/openwrt/custom.d/50-stun4all" "$URL/config_files/50-stun4all"
