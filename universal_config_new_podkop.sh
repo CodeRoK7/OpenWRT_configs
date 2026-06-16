@@ -887,11 +887,12 @@ fi
 
 wget -O "/etc/init.d/opera-proxy" "$URL/config_files/opera-proxy"
 /etc/init.d/opera-proxy restart
+sleep 5
 
 isWorkOperaProxy=0
 printf "\033[32;1mCheck opera proxy...\033[0m\n"
 service sing-box restart
-curl --proxy http://127.0.0.1:18080 2ip.ru
+curl --proxy http://127.0.0.1:18080 ipinfo.io/ip
 if [ $? -eq 0 ]; then
 	printf "\n\033[32;1mOpera proxy well work...\033[0m\n"
 	isWorkOperaProxy=1
